@@ -106,7 +106,25 @@ public class MainActivity extends Activity {
             btnUpdate.setText("Atualizar");
             btnUpdate.setOnClickListener(v -> {
                 String newUrl = input.getText().toString().trim();
-                executor.execute(() -> storage.updateImageUrl(p.title, newUrl));
+                executor.execute(() -> {
+                    storage.updateImageUrl(p.title, newUrl);
+
+                    try{
+                        var is = new java.net.URL(newUrl).openStream();
+                        var bmp = android.graphics.BitmapFactory.decodeStream(is);
+
+                        runOnUiThread(() -> {
+                            container.removeAllViews();  // remove "Sem imagem" OU imagem antiga
+                            img.setImageBitmap(bmp);
+                            container.addView(img);
+                            Toast.makeText(this, "Imagem atualizada", Toast.LENGTH_LONG).show();
+                        });
+
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             });
 
             box.addView(titleView);
