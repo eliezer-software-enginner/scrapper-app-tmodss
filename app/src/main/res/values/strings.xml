@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hack TechMods</string>
+    <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
+    <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
 </resources>

@@ -1,16 +1,19 @@
-package my.app;
+package my.app.storages;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import my.app.data.Content;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Gerencia o armazenamento da lista de posts usando o diretório de arquivos interno
+ * do aplicativo.
+ */
 public class Storage {
 
     private static final String FILENAME = "posts.json";
@@ -20,28 +23,27 @@ public class Storage {
     public Map<String, Content> postCache = new HashMap<>();
 
     public Storage(Context ctx) {
-
-        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File folder = new File(downloads, "posts-tekmods");
-
-        if (!folder.exists()) folder.mkdirs();
-
-        this.storageFile = new File(folder, FILENAME);
+        // Inicializa o objeto File no construtor, apontando para o diretório
+        // de arquivos interno do aplicativo (Context.getFilesDir()).
+        this.storageFile = new File(ctx.getFilesDir(), FILENAME);
         load();
     }
 
     private void load() {
         try {
-            if (!storageFile.exists()) {
-                Log.i("Storage", "Arquivo não existe, iniciando cache vazio");
+            // Verifica a existência e o tamanho (evita erro de JSON vazio)
+            if (!storageFile.exists() || storageFile.length() == 0) {
+                Log.i("Storage", "Arquivo não existe ou está vazio, iniciando cache vazio");
                 postCache = new HashMap<>();
                 return;
             }
 
+            // Usa o ObjectMapper diretamente com o objeto File.
             postCache = mapper.readValue(
                     storageFile,
                     new TypeReference<Map<String, Content>>() {}
             );
+            Log.i("Storage", "Posts carregados com sucesso: " + postCache.size());
 
         } catch (Exception e) {
             Log.e("Storage", "Erro ao carregar JSON: " + e.getMessage());
@@ -51,7 +53,9 @@ public class Storage {
 
     private void save() {
         try {
+            // Usa o ObjectMapper diretamente com o objeto File.
             mapper.writeValue(storageFile, postCache);
+            Log.i("Storage", "JSON de Posts salvo com sucesso no armazenamento interno.");
         } catch (Exception e) {
             Log.e("Storage", "Erro ao salvar JSON: " + e.getMessage());
         }

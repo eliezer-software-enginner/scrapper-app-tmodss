@@ -2,6 +2,7 @@ package my.app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import my.app.activities.MainActivity;
 import okhttp3.*;
 
 import java.io.IOException;

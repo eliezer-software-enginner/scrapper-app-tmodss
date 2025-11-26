@@ -1,6 +1,8 @@
 package my.app;
 
 import android.content.Context;
+import my.app.data.Channel;
+
 import java.io.IOException;
 
 public class SenderContentService {
@@ -18,13 +20,13 @@ public class SenderContentService {
     }
 
     public void send() throws IOException {
-        var channels = channelsHandler.loadChannels();
+        var channels = channelsHandler.loadChannels(this.context);
         var list = scrappingPage.fetchList();
       //  var content = scrappingPage.fetchList().get(0);
 
-        for (ChannelsHandler.Channel canal : channels) {
+        for (Channel canal : channels) {
             list.forEach(conteudo ->{
-                bot.sendMessageTo(conteudo, canal.chatdId());
+                bot.sendMessageTo(conteudo, canal.chatId);
             });
 
            //     bot.sendMessageTo(content, canal.chatdId());

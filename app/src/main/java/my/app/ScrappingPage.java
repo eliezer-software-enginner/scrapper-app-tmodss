@@ -2,6 +2,9 @@ package my.app;
 
 import android.content.Context;
 import android.util.Log;
+import my.app.activities.MainActivity;
+import my.app.data.Content;
+import my.app.storages.Storage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

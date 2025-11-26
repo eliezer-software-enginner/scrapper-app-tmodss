@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/rootLayout"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <!-- Status do scrapping -->
+        <TextView
+                android:id="@+id/txtStatus"
+                android:text="Idle"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        <!-- Botão de atualizar -->
+        <Button
+                android:id="@+id/btnScrap"
+                android:text="Atualizar conteúdos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <!-- Status test mode -->
+        <TextView
+                android:id="@+id/txtTestMode"
+                android:text="TestMode:false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"/>
+
+        <!-- Container onde os POSTS vão aparecer -->
+        <LinearLayout
+                android:id="@+id/containerPosts"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

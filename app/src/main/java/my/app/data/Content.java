@@ -1,7 +1,5 @@
-package my.app;
+package my.app.data;
 
-import android.os.Build;
-import androidx.annotation.RequiresApi;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
