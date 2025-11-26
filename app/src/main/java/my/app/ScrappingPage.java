@@ -12,6 +12,7 @@ import java.util.List;
 
 public class ScrappingPage {
     final static String  URL = "https://tekmods.com/";
+    final UrlShortener encurtador = new UrlShortener();
 
     public List<Content> fetchList() throws IOException {
         //ir em div que tem o id "content" -> depois entrar em main que tem o id "primary"
@@ -82,10 +83,12 @@ public class ScrappingPage {
             System.out.println("Span 3: " + info);
             System.out.println("--------------------------------");
 
+            var url = encurtador.shortUrl(link);
+
             var obj = new Content();
             obj.title = title;
             obj.imgUrl = imageSrc;
-            obj.link = link;
+            obj.link = url;
             obj.info = info;
             obj.version = version;
 

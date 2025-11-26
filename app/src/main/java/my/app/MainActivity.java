@@ -6,9 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
+import androidx.work.*;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -89,13 +87,17 @@ public class MainActivity extends Activity {
     }
 
     void agendarScrappingDiario() {
+        // 1. Defina as restrições
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED) // Requer conexão de rede
+                .build();
         // 1. Criar a requisição de trabalho periódico (Repetindo a cada 24 horas)
         // O WorkManager garante que o intervalo mínimo de repetição seja de 15 minutos,
         // mas é ideal para tarefas diárias.
         PeriodicWorkRequest scrappingRequest =
                 new PeriodicWorkRequest.Builder(ScrappingWorker.class,
-                        6, TimeUnit.HOURS) // Define o intervalo de repetição como 24 horas
-                        // .setConstraints(...) // Opcional: Adicione restrições como "necessita de rede"
+                        4, TimeUnit.HOURS) // Define o intervalo de repetição como 24 horas
+                        .setConstraints(constraints) // Opcional: Adicione restrições como "necessita de rede"
                         .build();
 
         // 2. Enfileirar a requisição
