@@ -24,7 +24,7 @@ public class ScrappingWorker extends Worker {
 
         try {
             // **AQUI: Sua lógica de rede/scrapping deve ser executada**
-            var sender = new SenderContentService();
+            var sender = new SenderContentService(this.getApplicationContext());
             sender.send(); // Execução da tarefa de scraping
 
             Log.i(TAG, "Scrapping concluído com sucesso.");

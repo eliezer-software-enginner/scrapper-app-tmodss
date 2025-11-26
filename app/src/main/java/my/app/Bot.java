@@ -1,5 +1,6 @@
 package my.app;
 
+import android.content.Context;
 import android.os.Environment;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -14,10 +15,8 @@ import static my.app.UiBuilder.createCaption;
 import static my.app.UiBuilder.getDownloadInlineButton;
 
 public class Bot implements LongPollingSingleThreadUpdateConsumer {
-    // Nota: O token '8214368967:AAFN-Hq8bNU1pue0o4ysK_FsxQ5jde8mTXs' está visível.
-    // Em um projeto real, ele deve ser armazenado de forma segura (e.g., secrets ou build config).
     private final TelegramClient telegramClient = new OkHttpTelegramClient(Env.BOTTOKEN);
-    private final UrlShortener urlShortener = new UrlShortener();
+    public Context context;
 
     @Override
     public void consume(Update update) {
@@ -25,17 +24,14 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     }
 
     public void sendMessageTo(Content content, String chat_id){
-
-        var url = urlShortener.shortUrl(content.link);
-
-        InlineKeyboardMarkup keyboard = getDownloadInlineButton(url);
+        InlineKeyboardMarkup keyboard = getDownloadInlineButton(content.link);
 
         // 4. Monta a mensagem SendPhoto
         var msg = SendPhoto
                 .builder()
                 .chatId(chat_id)
                 .photo(new InputFile(content.imgUrl))
-                .caption(createCaption(content, url))
+                .caption(createCaption(content))
                 .parseMode("HTML") // **MUITO IMPORTANTE**: Informa ao Telegram para interpretar o 'caption' como HTML (para o negrito)
                 .replyMarkup(keyboard) // Anexa o teclado inline à mensagem
                 .build();

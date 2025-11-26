@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "my.app"
-    compileSdk = 34
+    compileSdk = 35 //android 15 (meu celular)
 
     defaultConfig {
         applicationId = "my.app"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 35
+        targetSdk = 34 //android 15 (meu celular)
         versionCode = 1
         versionName = "1.0"
     }

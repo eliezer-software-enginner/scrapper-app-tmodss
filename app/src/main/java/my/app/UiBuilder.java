@@ -27,7 +27,7 @@ public class UiBuilder {
         return keyboard;
     }
 
-    public static String createCaption(Content content, String url){
+    public static String createCaption(Content content){
         // Usamos StringBuilder para construir a string de forma eficiente
         StringBuilder sb = new StringBuilder();
 
@@ -44,7 +44,7 @@ public class UiBuilder {
         // 3. Como Usar & PlayStore - Links
         // ℹ️ Como Usar 🔶 PlayStore app
         // Assumindo content.howToUseLink() e content.playStoreLink()
-        sb.append("ℹ️ <a href=\"").append(url).append("\">Como Usar</a> \uD83D\uDD36 <a href=\"").append(url).append("\">PlayStore app</a>").append("\n\n");
+        sb.append("ℹ️ <a href=\"").append(content.link).append("\">Como Usar</a> \uD83D\uDD36 <a href=\"").append(content.link).append("\">PlayStore app</a>").append("\n\n");
 
         // 4. Separador
         sb.append("------------------------------------------").append("\n\n");
@@ -53,12 +53,15 @@ public class UiBuilder {
         // 💎 Info: *Premium Desbloqueado*
         sb.append("\uD83D\uDC8E Info: <i>").append(content.info).append("</i>").append("\n");
 
+        //6. ⏰ Atualizado às 10:45 - 26 de novembro, 2025
+        sb.append("⏰ Atualizado às : <i>").append(content.getDtAtualizacaoDinamica()).append("</i>").append("\n");
+
         // 7. Separador
         sb.append("------------------------------------------").append("\n\n");
 
         // 8. DOWNLOAD (Link para o próprio content.link()) - Negrito + Link
         // 🔗 DOWNLOAD
-        sb.append("\uD83D\uDD17 <b><a href=\"").append(url).append("\">DOWNLOAD</a></b>").append("\n\n");
+        sb.append("\uD83D\uDD17 <b><a href=\"").append(content.link).append("\">DOWNLOAD</a></b>").append("\n\n");
 
         // 9. Separador
         sb.append("------------------------------------------").append("\n\n");

@@ -1,5 +1,7 @@
 package my.app;
 
+import android.content.Context;
+import android.util.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,7 +15,11 @@ import java.util.List;
 public class ScrappingPage {
     final static String  URL = "https://tekmods.com/";
     final UrlShortener encurtador = new UrlShortener();
+    final Storage storage;
 
+    public ScrappingPage(Context context){
+        this.storage = new Storage(context);
+    }
     public List<Content> fetchList() throws IOException {
         //ir em div que tem o id "content" -> depois entrar em main que tem o id "primary"
         //e então entra na div que possui a classe "row"
@@ -83,16 +89,23 @@ public class ScrappingPage {
             System.out.println("Span 3: " + info);
             System.out.println("--------------------------------");
 
-            var url = encurtador.shortUrl(link);
+            var postFounded = storage.getPostByName(title);
+            if(postFounded!= null && postFounded.link != null){
+                Log.i(MainActivity.TAG,"link carregado da memoria: " + postFounded.link);
+                list.add(postFounded);
+            }else{
+                String url = encurtador.shortUrl(link);
 
-            var obj = new Content();
-            obj.title = title;
-            obj.imgUrl = imageSrc;
-            obj.link = url;
-            obj.info = info;
-            obj.version = version;
+                var obj = new Content();
+                obj.title = title;
+                obj.imgUrl = imageSrc;
+                obj.link = url;
+                obj.info = info;
+                obj.version = version;
 
-            list.add(obj);
+                list.add(obj);
+                storage.savePost(obj);
+            }
         }
         // exemplo do título
         System.out.println(doc.title());

@@ -2,19 +2,20 @@ package my.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.Gravity;
+import android.widget.*;
 import androidx.work.*;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
-    private static final String TAG = "MainActivity"; // Para logs
+    public static final String TAG = "MainActivity"; // Para logs
 
     LinearLayout layout;
     TextView contentView;
@@ -33,12 +34,13 @@ public class MainActivity extends Activity {
 
         agendarScrappingDiario();
 
+        ScrollView scroll = new ScrollView(this);
+
         layout = new LinearLayout(this);
         btn = new Button(this);
         contentView = new TextView(this);
         textViewIsTestMode = new TextView(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-
 
         contentView.setText("Idle");
         textViewIsTestMode.setText(MainActivity.IsTestMode?"TestMode:True":"TestMode:False");
@@ -46,11 +48,76 @@ public class MainActivity extends Activity {
         layout.addView(btn);
         layout.addView(textViewIsTestMode);
 
-        setContentView(layout);
+        scroll.addView(layout);
+        setContentView(scroll);
 
         btn.setOnClickListener(ev->handleClick());
 
         // --- INÍCIO DA SOLUÇÃO ---
+
+        Storage storage = new Storage(this);
+
+        LinearLayout listContainer = new LinearLayout(this);
+        listContainer.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(listContainer);
+
+        Map<String, Content> posts = new Storage(this).postCache;
+
+        for (String key : posts.keySet()) {
+            Content p = posts.get(key);
+
+            LinearLayout box = new LinearLayout(this);
+            box.setOrientation(LinearLayout.VERTICAL);
+
+            TextView titleView = new TextView(this);
+            assert p != null;
+            titleView.setText(p.title);
+
+            LinearLayout container = new LinearLayout(this);container.setGravity(Gravity.CENTER_HORIZONTAL);
+
+            ImageView img = new ImageView(this);
+
+            Runnable showNoImg = () -> {
+                TextView n = new TextView(this);
+                n.setText("Sem imagem");
+                container.addView(n);
+            };
+
+            if (p.imgUrl != null && !p.imgUrl.isEmpty()) {
+                executor.execute(() -> {
+                    try {
+                        var is = new java.net.URL(p.imgUrl).openStream();
+                        var bmp = android.graphics.BitmapFactory.decodeStream(is);
+                        runOnUiThread(() -> {
+                            img.setImageBitmap(bmp);
+                            container.addView(img);
+                        });
+                    } catch (Exception e) {
+                        Log.i(MainActivity.TAG, "carregamento: " + e.getMessage());
+                        runOnUiThread(showNoImg);
+                    }
+                });
+            } else showNoImg.run();
+
+            EditText input = new EditText(this);
+            input.setHint("Nova URL da imagem");
+
+            Button btnUpdate = new Button(this);
+            btnUpdate.setText("Atualizar");
+            btnUpdate.setOnClickListener(v -> {
+                String newUrl = input.getText().toString().trim();
+                executor.execute(() -> storage.updateImageUrl(p.title, newUrl));
+            });
+
+            box.addView(titleView);
+            box.addView(container);
+            box.addView(input);
+            box.addView(btnUpdate);
+
+            listContainer.addView(box);
+
+        }
+
     }
 
     // É uma boa prática desligar o executor ao destruir a Activity
@@ -65,7 +132,7 @@ public class MainActivity extends Activity {
         executor.execute(() -> {
             try {
                 // 2. A operação de rede (que pode bloquear) é executada aqui, na Thread de background
-                var sender = new SenderContentService();
+                var sender = new SenderContentService(this);
                 sender.send();
 
                 // Exemplo de como atualizar a UI após a conclusão (opcional)
